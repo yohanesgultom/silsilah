@@ -59,9 +59,12 @@ class UpdateRequest extends FormRequest
     {
         $formData = parent::validated();
 
-        $formData['yod'] = $this->getYod($formData);
-        $formData['yob'] = $this->getYob($formData);
-
+        if (!empty($formData['yod']) || !empty($formData['dod'])) {
+            $formData['yod'] = $this->getYod($formData);
+        }
+        if (!empty($formData['yob']) || !empty($formData['dob'])) {
+            $formData['yob'] = $this->getYob($formData);
+        }
         if (isset($formData['password']) && $formData['password']) {
             $formData['password'] = bcrypt($formData['password']);
         } else {
