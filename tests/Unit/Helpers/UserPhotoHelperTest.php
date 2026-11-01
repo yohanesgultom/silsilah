@@ -54,6 +54,12 @@ class UserPhotoHelperTest extends TestCase
     {
         $photoPath = 'images/user_photo_path.jpg';
 
+        // Ensure the public/storage symlink exists (Laravel convention)
+        $storageLink = public_path('storage');
+        if (!is_link($storageLink) && !file_exists($storageLink)) {
+            @symlink(storage_path('app/public'), $storageLink);
+        }
+
         if (!is_dir(storage_path('app/public/images'))) {
             mkdir(storage_path('app/public/images'), 0700);
         }
@@ -74,6 +80,10 @@ class UserPhotoHelperTest extends TestCase
 
         $this->assertFileExists(storage_path('app/public/images/user_photo_path.jpg'));
         unlink(storage_path('app/public/images/user_photo_path.jpg'));
+        // Clean up symlink we created (skip warning)
+        if (is_link($storageLink)) {
+            @unlink($storageLink);
+        }
         $this->assertFileDoesNotExist(storage_path('app/public/images/user_photo_path.jpg'));
     }
 

@@ -13,6 +13,7 @@ class ManageUserMarriagesTest extends TestCase
     /** @test */
     public function user_can_visit_other_user_marriages_page()
     {
+        $user = $this->loginAsUser();
         $user = factory(User::class)->create();
         $this->visit(route('users.marriages', $user->id));
         $this->see($user->name);

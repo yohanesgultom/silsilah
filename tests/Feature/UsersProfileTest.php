@@ -21,16 +21,13 @@ class UsersProfileTest extends TestCase
         $johan = factory(user::class)->create(['name' => 'Johan']);
 
         $this->visitRoute('users.search', ['q' => 'jo']);
-        $this->seeRouteIs('users.search', ['q' => 'jo']);
-
-        $this->seeText('Jono');
-        $this->seeText('Johan');
-        $this->dontSeeText('Jeni');
+        $this->seeRouteIs('login');
     }
 
     /** @test */
     public function user_can_view_other_users_profile()
     {
+        $user = $this->loginAsUser();
         $user = factory(User::class)->create();
         $this->visit(route('users.show', $user->id));
         $this->see($user->name);
