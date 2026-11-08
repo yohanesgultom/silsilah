@@ -1,6 +1,11 @@
-![Laravel](https://laravel.com/assets/img/components/logo-laravel.svg)
-
 <h1 align="center">Silsilah</h1>
+
+<div align="center">
+
+![Workflow Status](https://github.com/yohanesgultom/silsilah/actions/workflows/test.yml/badge.svg)
+
+</div>
+
 
 Genealogy (Silsilah) application to record our family members.
 
