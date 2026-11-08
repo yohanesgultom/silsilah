@@ -8,20 +8,26 @@
                 <td class="col-sm-8">
                     @can ('edit', $user)
                         @if (request('action') == 'set_father')
-                        {{ Form::open(['route' => ['family-actions.set-father', $user->id]]) }}
-                        {!! FormField::select('set_father_id', $malePersonList, ['label' => false, 'value' => $user->father_id, 'placeholder' => __('app.select_from_existing_males')]) !!}
-                        <div class="input-group">
-                            {{ Form::text('set_father', null, ['class' => 'form-control input-sm', 'placeholder' => __('app.enter_new_name')]) }}
-                            <span class="input-group-btn">
-                                {{ Form::submit(__('app.update'), ['class' => 'btn btn-info btn-sm', 'id' => 'set_father_button']) }}
-                                {{ link_to_route('users.show', __('app.cancel'), [$user->id], ['class' => 'btn btn-default btn-sm']) }}
-                            </span>
-                        </div>
-                        {{ Form::close() }}
+                        <form method="POST" action="{{ route('family-actions.set-father', $user->id) }}" autocomplete="off">
+                            @csrf
+                            <select name="set_father_id" class="form-control input-sm" value="{{ $user->father_id }}">
+                            <option value="">{{ __('app.select_from_existing_males') }}</option>
+                            @foreach($malePersonList as $id => $name)
+                                <option value="{{ $id }}" @if($id == $user->father_id) selected @endif>{{ $name }}</option>
+                            @endforeach
+                        </select>
+                            <div class="input-group">
+                                <input type="text" name="set_father" class="form-control input-sm" placeholder="{{ __('app.enter_new_name') }}" value="{{ old('set_father') }}">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-info btn-sm" id="set_father_button">{{ __('app.update') }}</button>
+                                    <a href="{{ route('users.show', $user->id) }}" class="btn btn-default btn-sm">{{ __('app.cancel') }}</a>
+                                </span>
+                            </div>
+                        </form>
                         @else
                             {{ $user->fatherLink() }}
                             <div class="pull-right">
-                                {{ link_to_route('users.show', __('user.set_father'), [$user->id, 'action' => 'set_father'], ['class' => 'btn btn-link btn-xs']) }}
+                                <a href="{{ route('users.show', [$user->id, 'action' => 'set_father']) }}" class="btn btn-link btn-xs">{{ __('user.set_father') }}</a>
                             </div>
                         @endif
                     @else
@@ -34,20 +40,26 @@
                 <td>
                     @can ('edit', $user)
                         @if (request('action') == 'set_mother')
-                        {{ Form::open(['route' => ['family-actions.set-mother', $user->id]]) }}
-                        {!! FormField::select('set_mother_id', $femalePersonList, ['label' => false, 'value' => $user->mother_id, 'placeholder' => __('app.select_from_existing_females')]) !!}
-                        <div class="input-group">
-                            {{ Form::text('set_mother', null, ['class' => 'form-control input-sm', 'placeholder' => __('app.enter_new_name')]) }}
-                            <span class="input-group-btn">
-                                {{ Form::submit(__('app.update'), ['class' => 'btn btn-info btn-sm', 'id' => 'set_mother_button']) }}
-                                {{ link_to_route('users.show', __('app.cancel'), [$user->id], ['class' => 'btn btn-default btn-sm']) }}
-                            </span>
-                        </div>
-                        {{ Form::close() }}
+                        <form method="POST" action="{{ route('family-actions.set-mother', $user->id) }}" autocomplete="off">
+                            @csrf
+                            <select name="set_mother_id" class="form-control input-sm" value="{{ $user->mother_id }}">
+                            <option value="">{{ __('app.select_from_existing_females') }}</option>
+                            @foreach($femalePersonList as $id => $name)
+                                <option value="{{ $id }}" @if($id == $user->mother_id) selected @endif>{{ $name }}</option>
+                            @endforeach
+                        </select>
+                            <div class="input-group">
+                                <input type="text" name="set_mother" class="form-control input-sm" placeholder="{{ __('app.enter_new_name') }}" value="{{ old('set_mother') }}">
+                                <span class="input-group-btn">
+                                    <button type="submit" class="btn btn-info btn-sm" id="set_mother_button">{{ __('app.update') }}</button>
+                                    <a href="{{ route('users.show', $user->id) }}" class="btn btn-default btn-sm">{{ __('app.cancel') }}</a>
+                                </span>
+                            </div>
+                        </form>
                         @else
                             {{ $user->motherLink() }}
                             <div class="pull-right">
-                                {{ link_to_route('users.show', __('user.set_mother'), [$user->id, 'action' => 'set_mother'], ['class' => 'btn btn-link btn-xs']) }}
+                                <a href="{{ route('users.show', [$user->id, 'action' => 'set_mother']) }}" class="btn btn-link btn-xs">{{ __('user.set_mother') }}</a>
                             </div>
                         @endif
                     @else
@@ -61,7 +73,7 @@
                     @can ('edit', $user)
                     <div class="pull-right">
                         @unless (request('action') == 'set_parent')
-                            {{ link_to_route('users.show', __('user.set_parent'), [$user->id, 'action' => 'set_parent'], ['class' => 'btn btn-link btn-xs']) }}
+                            <a href="{{ route('users.show', [$user->id, 'action' => 'set_parent']) }}" class="btn btn-link btn-xs">{{ __('user.set_parent') }}</a>
                         @endunless
                     </div>
                     @endcan
@@ -72,11 +84,17 @@
 
                     @can('edit', $user)
                         @if (request('action') == 'set_parent')
-                            {{ Form::open(['route' => ['family-actions.set-parent', $user->id]]) }}
-                            {!! FormField::select('set_parent_id', $allMariageList, ['label' => false, 'value' => $user->parent_id, 'placeholder' => __('app.select_from_existing_couples')]) !!}
-                            {{ Form::submit(__('app.update'), ['class' => 'btn btn-info btn-sm', 'id' => 'set_parent_button']) }}
-                            {{ link_to_route('users.show', __('app.cancel'), $user, ['class' => 'btn btn-default btn-sm']) }}
-                            {{ Form::close() }}
+                        <form method="POST" action="{{ route('family-actions.set-parent', $user->id) }}" autocomplete="off">
+                            @csrf
+                            <select name="set_parent_id" class="form-control">
+                                <option value="">{{ __('app.select_from_existing_couples') }}</option>
+                                @foreach($allMariageList as $id => $name)
+                                    <option value="{{ $id }}" @if($id == $user->parent_id) selected @endif>{{ $name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="submit" class="btn btn-info btn-sm" id="set_parent_button">{{ __('app.update') }}</button>
+                            <a href="{{ route('users.show', $user) }}" class="btn btn-default btn-sm">{{ __('app.cancel') }}</a>
+                        </form>
                         @endif
                     @endcan
                 </td>
@@ -88,7 +106,7 @@
                     @can ('edit', $user)
                     <div class="pull-right">
                         @unless (request('action') == 'add_spouse')
-                            {{ link_to_route('users.show', __('user.add_wife'), [$user->id, 'action' => 'add_spouse'], ['class' => 'btn btn-link btn-xs']) }}
+                            <a href="{{ route('users.show', [$user->id, 'action' => 'add_spouse']) }}" class="btn btn-link btn-xs">{{ __('user.add_wife') }}</a>
                         @endunless
                     </div>
                     @endcan
@@ -102,23 +120,27 @@
                     @endif
                     @can('edit', $user)
                         @if (request('action') == 'add_spouse')
-                        <div>
-                            {{ Form::open(['route' => ['family-actions.add-wife', $user->id]]) }}
-                            {!! FormField::select('set_wife_id', $femalePersonList, ['label' => false, 'placeholder' => __('app.select_from_existing_females')]) !!}
+                        <form method="POST" action="{{ route('family-actions.add-wife', $user->id) }}" autocomplete="off">
+                            @csrf
+                            <select name="set_wife_id" class="form-control">
+                                <option value="">{{ __('app.select_from_existing_females') }}</option>
+                                @foreach($femalePersonList as $id => $name)
+                                    <option value="{{ $id }}">{{ $name }}</option>
+                                @endforeach
+                            </select>
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-7">
-                                        {{ Form::text('set_wife', null, ['class' => 'form-control input-sm', 'placeholder' => __('app.enter_new_name')]) }}
+                                        <input type="text" name="set_wife" class="form-control input-sm" placeholder="{{ __('app.enter_new_name') }}" value="{{ old('set_wife') }}">
                                     </div>
                                     <div class="col-md-5">
-                                        {{ Form::text('marriage_date', null, ['class' => 'form-control input-sm', 'placeholder' => __('couple.marriage_date')]) }}
+                                        <input type="text" name="marriage_date" class="form-control input-sm" placeholder="{{ __('couple.marriage_date') }}" value="{{ old('marriage_date') }}">
                                     </div>
                                 </div>
                             </div>
-                            {{ Form::submit(__('app.update'), ['class' => 'btn btn-info btn-sm', 'id' => 'set_wife_button']) }}
-                            {{ link_to_route('users.show', __('app.cancel'), $user, ['class' => 'btn btn-default btn-sm']) }}
-                            {{ Form::close() }}
-                        </div>
+                            <button type="submit" name="set_wife_button" class="btn btn-info btn-sm" id="set_wife_button">{{ __('app.update') }}</button>
+                            <a href="{{ route('users.show', $user) }}" class="btn btn-default btn-sm">{{ __('app.cancel') }}</a>
+                        </form>
                         @endif
                     @endcan
                 </td>
@@ -130,7 +152,7 @@
                     @can ('edit', $user)
                     <div class="pull-right">
                         @unless (request('action') == 'add_spouse')
-                            {{ link_to_route('users.show', __('user.add_husband'), [$user->id, 'action' => 'add_spouse'], ['class' => 'btn btn-link btn-xs']) }}
+                            <a href="{{ route('users.show', [$user->id, 'action' => 'add_spouse']) }}" class="btn btn-link btn-xs">{{ __('user.add_husband') }}</a>
                         @endunless
                     </div>
                     @endcan
@@ -143,23 +165,27 @@
                     @endif
                     @can('edit', $user)
                         @if (request('action') == 'add_spouse')
-                        <div>
-                            {{ Form::open(['route' => ['family-actions.add-husband', $user->id]]) }}
-                            {!! FormField::select('set_husband_id', $malePersonList, ['label' => false, 'placeholder' => __('app.select_from_existing_males')]) !!}
+                        <form method="POST" action="{{ route('family-actions.add-husband', $user->id) }}" autocomplete="off">
+                            @csrf
+                            <select name="set_husband_id" class="form-control">
+                                <option value="">{{ __('app.select_from_existing_males') }}</option>
+                                @foreach($malePersonList as $id => $name)
+                                    <option value="{{ $id }}">{{ $name }}</option>
+                                @endforeach
+                            </select>
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-7">
-                                        {{ Form::text('set_husband', null, ['class' => 'form-control input-sm', 'placeholder' => __('app.enter_new_name')]) }}
+                                        <input type="text" name="set_husband" class="form-control input-sm" placeholder="{{ __('app.enter_new_name') }}" value="{{ old('set_husband') }}">
                                     </div>
                                     <div class="col-md-5">
-                                        {{ Form::text('marriage_date', null, ['class' => 'form-control input-sm', 'placeholder' => __('couple.marriage_date')]) }}
+                                        <input type="text" name="marriage_date" class="form-control input-sm" placeholder="{{ __('couple.marriage_date') }}" value="{{ old('marriage_date') }}">
                                     </div>
                                 </div>
                             </div>
-                            {{ Form::submit(__('app.update'), ['class' => 'btn btn-info btn-sm', 'id' => 'set_husband_button']) }}
-                            {{ link_to_route('users.show', __('app.cancel'), [$user->id], ['class' => 'btn btn-default btn-sm']) }}
-                            {{ Form::close() }}
-                        </div>
+                            <button type="submit" name="set_husband_button" class="btn btn-info btn-sm" id="set_husband_button">{{ __('app.update') }}</button>
+                            <a href="{{ route('users.show', $user) }}" class="btn btn-default btn-sm">{{ __('app.cancel') }}</a>
+                        </form>
                         @endif
                     @endcan
                 </td>

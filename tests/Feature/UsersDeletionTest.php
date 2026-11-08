@@ -15,18 +15,18 @@ class UsersDeletionTest extends TestCase
     public function manager_can_delete_a_user()
     {
         $manager = $this->loginAsUser();
-        $user = factory(User::class)->create(['manager_id' => $manager->id]);
+        $user = User::factory()->create(['manager_id' => $manager->id]);
 
-        $this->visit(route('users.edit', $user));
-        $this->seeElement('a', ['id' => 'del-user-'.$user->id]);
+        // Visit delete confirmation page (GET to edit with action=delete)
+        $response = $this->get(route('users.edit', [$user, 'action' => 'delete']));
+        $response->assertStatus(200);
 
-        $this->click('del-user-'.$user->id);
-        $this->seePageIs(route('users.edit', [$user, 'action' => 'delete']));
-        $this->see(__('user.delete_confirm_button'));
+        // Submit delete form (POST to destroy with _method=DELETE and user_id)
+        $response = $this->delete(route('users.destroy', $user), [
+            'user_id' => $user->id,
+        ]);
 
-        $this->press(__('user.delete_confirm_button'));
-
-        $this->dontSeeInDatabase('users', [
+        $this->assertDatabaseMissing('users', [
             'id' => $user->id,
         ]);
     }
@@ -35,30 +35,34 @@ class UsersDeletionTest extends TestCase
     public function manager_can_delete_a_user_the_replace_childs_father_id()
     {
         $manager = $this->loginAsUser();
-        $oldUser = factory(User::class)->states('male')->create([
+        $oldUser = User::factory()->male()->create([
             'manager_id' => $manager->id,
         ]);
-        $oldUserChild = factory(User::class)->create(['father_id' => $oldUser->id]);
-        $replacementUser = factory(User::class)->states('male')->create([
+        $oldUserChild = User::factory()->create(['father_id' => $oldUser->id]);
+        $replacementUser = User::factory()->male()->create([
             'manager_id' => $manager->id,
         ]);
 
-        $this->visit(route('users.edit', [$oldUser, 'action' => 'delete']));
-        $this->see(__('user.replace_delete_text'));
+        // Visit delete confirmation page
+        $response = $this->get(route('users.edit', [$oldUser, 'action' => 'delete']));
+        $response->assertStatus(200);
+        $response->assertSee(__('user.replace_delete_text'));
 
-        $this->submitForm(__('user.replace_delete_button'), [
+        // Submit replace delete form
+        $response = $this->delete(route('users.destroy', $oldUser), [
+            'replace_delete_button' => true,
             'replacement_user_id' => $replacementUser->id,
         ]);
 
-        $this->dontSeeInDatabase('users', [
+        $this->assertDatabaseMissing('users', [
             'id' => $oldUser->id,
         ]);
 
-        $this->dontSeeInDatabase('users', [
+        $this->assertDatabaseMissing('users', [
             'father_id' => $oldUser->id,
         ]);
 
-        $this->seeInDatabase('users', [
+        $this->assertDatabaseHas('users', [
             'id'        => $oldUserChild->id,
             'father_id' => $replacementUser->id,
         ]);
@@ -68,30 +72,34 @@ class UsersDeletionTest extends TestCase
     public function manager_can_delete_a_user_the_replace_childs_mother_id()
     {
         $manager = $this->loginAsUser();
-        $oldUser = factory(User::class)->states('female')->create([
+        $oldUser = User::factory()->female()->create([
             'manager_id' => $manager->id,
         ]);
-        $oldUserChild = factory(User::class)->create(['mother_id' => $oldUser->id]);
-        $replacementUser = factory(User::class)->states('female')->create([
+        $oldUserChild = User::factory()->create(['mother_id' => $oldUser->id]);
+        $replacementUser = User::factory()->female()->create([
             'manager_id' => $manager->id,
         ]);
 
-        $this->visit(route('users.edit', [$oldUser, 'action' => 'delete']));
-        $this->see(__('user.replace_delete_text'));
+        // Visit delete confirmation page
+        $response = $this->get(route('users.edit', [$oldUser, 'action' => 'delete']));
+        $response->assertStatus(200);
+        $response->assertSee(__('user.replace_delete_text'));
 
-        $this->submitForm(__('user.replace_delete_button'), [
+        // Submit replace delete form
+        $response = $this->delete(route('users.destroy', $oldUser), [
+            'replace_delete_button' => true,
             'replacement_user_id' => $replacementUser->id,
         ]);
 
-        $this->dontSeeInDatabase('users', [
+        $this->assertDatabaseMissing('users', [
             'id' => $oldUser->id,
         ]);
 
-        $this->dontSeeInDatabase('users', [
+        $this->assertDatabaseMissing('users', [
             'mother_id' => $oldUser->id,
         ]);
 
-        $this->seeInDatabase('users', [
+        $this->assertDatabaseHas('users', [
             'id'        => $oldUserChild->id,
             'mother_id' => $replacementUser->id,
         ]);
@@ -101,30 +109,34 @@ class UsersDeletionTest extends TestCase
     public function manager_can_delete_a_user_the_replace_users_manager_id()
     {
         $manager = $this->loginAsUser();
-        $oldUser = factory(User::class)->states('male')->create([
+        $oldUser = User::factory()->male()->create([
             'manager_id' => $manager->id,
         ]);
-        $oldUserManagedUser = factory(User::class)->create(['manager_id' => $oldUser->id]);
-        $replacementUser = factory(User::class)->states('male')->create([
+        $oldUserManagedUser = User::factory()->create(['manager_id' => $oldUser->id]);
+        $replacementUser = User::factory()->male()->create([
             'manager_id' => $manager->id,
         ]);
 
-        $this->visit(route('users.edit', [$oldUser, 'action' => 'delete']));
-        $this->see(__('user.replace_delete_text'));
+        // Visit delete confirmation page
+        $response = $this->get(route('users.edit', [$oldUser, 'action' => 'delete']));
+        $response->assertStatus(200);
+        $response->assertSee(__('user.replace_delete_text'));
 
-        $this->submitForm(__('user.replace_delete_button'), [
+        // Submit replace delete form
+        $response = $this->delete(route('users.destroy', $oldUser), [
+            'replace_delete_button' => true,
             'replacement_user_id' => $replacementUser->id,
         ]);
 
-        $this->dontSeeInDatabase('users', [
+        $this->assertDatabaseMissing('users', [
             'id' => $oldUser->id,
         ]);
 
-        $this->dontSeeInDatabase('users', [
+        $this->assertDatabaseMissing('users', [
             'manager_id' => $oldUser->id,
         ]);
 
-        $this->seeInDatabase('users', [
+        $this->assertDatabaseHas('users', [
             'id'         => $oldUserManagedUser->id,
             'manager_id' => $replacementUser->id,
         ]);
@@ -134,32 +146,36 @@ class UsersDeletionTest extends TestCase
     public function manager_can_delete_a_user_the_replace_couples_husband_id()
     {
         $manager = $this->loginAsUser();
-        $oldUser = factory(User::class)->states('male')->create([
+        $oldUser = User::factory()->male()->create([
             'manager_id' => $manager->id,
         ]);
-        $oldUserCouple = factory(Couple::class)->create([
+        $oldUserCouple = Couple::factory()->create([
             'husband_id' => $oldUser->id,
         ]);
-        $replacementUser = factory(User::class)->states('male')->create([
+        $replacementUser = User::factory()->male()->create([
             'manager_id' => $manager->id,
         ]);
 
-        $this->visit(route('users.edit', [$oldUser, 'action' => 'delete']));
-        $this->see(__('user.replace_delete_text'));
+        // Visit delete confirmation page
+        $response = $this->get(route('users.edit', [$oldUser, 'action' => 'delete']));
+        $response->assertStatus(200);
+        $response->assertSee(__('user.replace_delete_text'));
 
-        $this->submitForm(__('user.replace_delete_button'), [
+        // Submit replace delete form
+        $response = $this->delete(route('users.destroy', $oldUser), [
+            'replace_delete_button' => true,
             'replacement_user_id' => $replacementUser->id,
         ]);
 
-        $this->dontSeeInDatabase('users', [
+        $this->assertDatabaseMissing('users', [
             'id' => $oldUser->id,
         ]);
 
-        $this->dontSeeInDatabase('couples', [
+        $this->assertDatabaseMissing('couples', [
             'husband_id' => $oldUser->id,
         ]);
 
-        $this->seeInDatabase('couples', [
+        $this->assertDatabaseHas('couples', [
             'id'         => $oldUserCouple->id,
             'husband_id' => $replacementUser->id,
         ]);
@@ -169,32 +185,36 @@ class UsersDeletionTest extends TestCase
     public function manager_can_delete_a_user_the_replace_couples_wife_id()
     {
         $manager = $this->loginAsUser();
-        $oldUser = factory(User::class)->states('female')->create([
+        $oldUser = User::factory()->female()->create([
             'manager_id' => $manager->id,
         ]);
-        $oldUserCouple = factory(Couple::class)->create([
+        $oldUserCouple = Couple::factory()->create([
             'wife_id' => $oldUser->id,
         ]);
-        $replacementUser = factory(User::class)->states('female')->create([
+        $replacementUser = User::factory()->female()->create([
             'manager_id' => $manager->id,
         ]);
 
-        $this->visit(route('users.edit', [$oldUser, 'action' => 'delete']));
-        $this->see(__('user.replace_delete_text'));
+        // Visit delete confirmation page
+        $response = $this->get(route('users.edit', [$oldUser, 'action' => 'delete']));
+        $response->assertStatus(200);
+        $response->assertSee(__('user.replace_delete_text'));
 
-        $this->submitForm(__('user.replace_delete_button'), [
+        // Submit replace delete form
+        $response = $this->delete(route('users.destroy', $oldUser), [
+            'replace_delete_button' => true,
             'replacement_user_id' => $replacementUser->id,
         ]);
 
-        $this->dontSeeInDatabase('users', [
+        $this->assertDatabaseMissing('users', [
             'id' => $oldUser->id,
         ]);
 
-        $this->dontSeeInDatabase('couples', [
+        $this->assertDatabaseMissing('couples', [
             'wife_id' => $oldUser->id,
         ]);
 
-        $this->seeInDatabase('couples', [
+        $this->assertDatabaseHas('couples', [
             'id'      => $oldUserCouple->id,
             'wife_id' => $replacementUser->id,
         ]);
@@ -204,32 +224,36 @@ class UsersDeletionTest extends TestCase
     public function manager_can_delete_a_user_the_replace_couples_manager_id()
     {
         $manager = $this->loginAsUser();
-        $oldUser = factory(User::class)->states('male')->create([
+        $oldUser = User::factory()->male()->create([
             'manager_id' => $manager->id,
         ]);
-        $oldCoupleManagedCouple = factory(Couple::class)->create([
+        $oldCoupleManagedCouple = Couple::factory()->create([
             'manager_id' => $oldUser->id,
         ]);
-        $replacementUser = factory(User::class)->states('male')->create([
+        $replacementUser = User::factory()->male()->create([
             'manager_id' => $manager->id,
         ]);
 
-        $this->visit(route('users.edit', [$oldUser, 'action' => 'delete']));
-        $this->see(__('user.replace_delete_text'));
+        // Visit delete confirmation page
+        $response = $this->get(route('users.edit', [$oldUser, 'action' => 'delete']));
+        $response->assertStatus(200);
+        $response->assertSee(__('user.replace_delete_text'));
 
-        $this->submitForm(__('user.replace_delete_button'), [
+        // Submit replace delete form
+        $response = $this->delete(route('users.destroy', $oldUser), [
+            'replace_delete_button' => true,
             'replacement_user_id' => $replacementUser->id,
         ]);
 
-        $this->dontSeeInDatabase('users', [
+        $this->assertDatabaseMissing('users', [
             'id' => $oldUser->id,
         ]);
 
-        $this->dontSeeInDatabase('couples', [
+        $this->assertDatabaseMissing('couples', [
             'manager_id' => $oldUser->id,
         ]);
 
-        $this->seeInDatabase('couples', [
+        $this->assertDatabaseHas('couples', [
             'id'         => $oldCoupleManagedCouple->id,
             'manager_id' => $replacementUser->id,
         ]);
@@ -239,49 +263,54 @@ class UsersDeletionTest extends TestCase
     public function user_replacement_options_only_available_on_same_gender()
     {
         $manager = $this->loginAsUser();
-        $maleUser = factory(User::class)->states('male')->create([
+        $maleUser = User::factory()->male()->create([
             'manager_id' => $manager->id,
         ]);
-        $maleUserChild = factory(User::class)->create(['father_id' => $maleUser->id]);
+        $maleUserChild = User::factory()->create(['father_id' => $maleUser->id]);
 
-        $replacementMaleUser = factory(User::class)->states('male')->create();
-        $femaleUser = factory(User::class)->states('female')->create();
+        $replacementMaleUser = User::factory()->male()->create();
+        $femaleUser = User::factory()->female()->create();
 
-        $this->visit(route('users.edit', [$maleUser, 'action' => 'delete']));
-
-        $this->see(__('user.replace_delete_text'));
-        $this->seeElement('option', ['value' => $replacementMaleUser->id]);
-        $this->dontSeeElement('option', ['value' => $femaleUser->id]);
+        // Visit delete confirmation page
+        $response = $this->get(route('users.edit', [$maleUser, 'action' => 'delete']));
+        $response->assertStatus(200);
+        $response->assertSee(__('user.replace_delete_text'));
+        $response->assertSee($replacementMaleUser->name);
+        $response->assertDontSee($femaleUser->name);
     }
 
     /** @test */
     public function bugfix_handle_duplicated_couple_on_user_deletion()
     {
         $manager = $this->loginAsUser();
-        $singleWife = factory(User::class)->states('female')->create(['manager_id' => $manager->id]);
-        $oldUser = factory(User::class)->states('male')->create(['manager_id' => $manager->id]);
-        $replacementUser = factory(User::class)->states('male')->create(['manager_id' => $manager->id]);
-        $oldUserCouple = factory(Couple::class)->create([
+        $singleWife = User::factory()->female()->create(['manager_id' => $manager->id]);
+        $oldUser = User::factory()->male()->create(['manager_id' => $manager->id]);
+        $replacementUser = User::factory()->male()->create(['manager_id' => $manager->id]);
+        $oldUserCouple = Couple::factory()->create([
             'husband_id' => $oldUser->id,
             'wife_id'    => $singleWife->id,
         ]);
-        $duplicatedCouple = factory(Couple::class)->create([
+        $duplicatedCouple = Couple::factory()->create([
             'husband_id' => $replacementUser->id,
             'wife_id'    => $singleWife->id,
         ]);
 
-        $this->visit(route('users.edit', [$oldUser, 'action' => 'delete']));
-        $this->see(__('user.replace_delete_text'));
+        // Visit delete confirmation page
+        $response = $this->get(route('users.edit', [$oldUser, 'action' => 'delete']));
+        $response->assertStatus(200);
+        $response->assertSee(__('user.replace_delete_text'));
 
-        $this->submitForm(__('user.replace_delete_button'), [
+        // Submit replace delete form
+        $response = $this->delete(route('users.destroy', $oldUser), [
+            'replace_delete_button' => true,
             'replacement_user_id' => $replacementUser->id,
         ]);
 
-        $this->dontSeeInDatabase('users', ['id' => $oldUser->id]);
+        $this->assertDatabaseMissing('users', ['id' => $oldUser->id]);
 
-        $this->dontSeeInDatabase('couples', ['husband_id' => $oldUser->id]);
+        $this->assertDatabaseMissing('couples', ['husband_id' => $oldUser->id]);
 
-        $this->seeInDatabase('couples', [
+        $this->assertDatabaseHas('couples', [
             'id'         => $oldUserCouple->id,
             'husband_id' => $replacementUser->id,
             'wife_id'    => $singleWife->id,
@@ -292,37 +321,41 @@ class UsersDeletionTest extends TestCase
     public function bugfix_handle_duplicated_couple_on_user_deletion_with_different_marriages()
     {
         $manager = $this->loginAsUser();
-        $oldUserWife = factory(User::class)->states('female')->create(['manager_id' => $manager->id]);
-        $replacementUserWife = factory(User::class)->states('female')->create(['manager_id' => $manager->id]);
-        $oldUser = factory(User::class)->states('male')->create(['manager_id' => $manager->id]);
-        $replacementUser = factory(User::class)->states('male')->create(['manager_id' => $manager->id]);
-        $oldUserCouple = factory(Couple::class)->create([
+        $oldUserWife = User::factory()->female()->create(['manager_id' => $manager->id]);
+        $replacementUserWife = User::factory()->female()->create(['manager_id' => $manager->id]);
+        $oldUser = User::factory()->male()->create(['manager_id' => $manager->id]);
+        $replacementUser = User::factory()->male()->create(['manager_id' => $manager->id]);
+        $oldUserCouple = Couple::factory()->create([
             'husband_id' => $oldUser->id,
             'wife_id'    => $oldUserWife->id,
         ]);
-        $newUserCouple = factory(Couple::class)->create([
+        $newUserCouple = Couple::factory()->create([
             'husband_id' => $replacementUser->id,
             'wife_id'    => $replacementUserWife->id,
         ]);
 
-        $this->visit(route('users.edit', [$oldUser, 'action' => 'delete']));
-        $this->see(__('user.replace_delete_text'));
+        // Visit delete confirmation page
+        $response = $this->get(route('users.edit', [$oldUser, 'action' => 'delete']));
+        $response->assertStatus(200);
+        $response->assertSee(__('user.replace_delete_text'));
 
-        $this->submitForm(__('user.replace_delete_button'), [
+        // Submit replace delete form
+        $response = $this->delete(route('users.destroy', $oldUser), [
+            'replace_delete_button' => true,
             'replacement_user_id' => $replacementUser->id,
         ]);
 
-        $this->dontSeeInDatabase('users', ['id' => $oldUser->id]);
+        $this->assertDatabaseMissing('users', ['id' => $oldUser->id]);
 
-        $this->dontSeeInDatabase('couples', ['husband_id' => $oldUser->id]);
+        $this->assertDatabaseMissing('couples', ['husband_id' => $oldUser->id]);
 
-        $this->seeInDatabase('couples', [
+        $this->assertDatabaseHas('couples', [
             'id'         => $oldUserCouple->id,
             'husband_id' => $replacementUser->id,
             'wife_id'    => $oldUserWife->id,
         ]);
 
-        $this->seeInDatabase('couples', [
+        $this->assertDatabaseHas('couples', [
             'id'         => $newUserCouple->id,
             'husband_id' => $replacementUser->id,
             'wife_id'    => $replacementUserWife->id,

@@ -9,10 +9,11 @@ return [
     |
     | This value is the name of your application. This value is used when the
     | framework needs to place the application's name in a notification or
-    | any other location as required by the application or its packages.
+    | any other location as required by the application.
+    |
     */
 
-    'name' => 'Silsilah',
+    'name' => env('APP_NAME', 'Laravel'),
 
     /*
     |--------------------------------------------------------------------------
@@ -29,18 +30,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | System Administrator Emails
-    |--------------------------------------------------------------------------
-    |
-    | This is config stores emails of users who have role of administrators.
-    | The user can edit and delete any users and marriages int he system.
-    |
-    */
-
-    'system_admin_emails' => env('SYSTEM_ADMIN_EMAILS'),
-
-    /*
-    |--------------------------------------------------------------------------
     | Application Debug Mode
     |--------------------------------------------------------------------------
     |
@@ -50,7 +39,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', false),
+    'debug' => (bool) env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -59,11 +48,13 @@ return [
     |
     | This URL is used by the console to properly generate URLs when using
     | the Artisan command line tool. You should set this to the root of
-    | your application so that it is used when running Artisan tasks.
+    | your application so that it is used when generating URLs.
     |
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+
+    'asset_url' => env('ASSET_URL', null),
 
     /*
     |--------------------------------------------------------------------------
@@ -76,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => env('APP_TIMEZONE', 'Asia/Makassar'),
+    'timezone' => env('APP_TIMEZONE', 'UTC'),
 
     /*
     |--------------------------------------------------------------------------
@@ -85,24 +76,16 @@ return [
     |
     | The application locale determines the default locale that will be used
     | by the translation service provider. You are free to set this value
-    | to any of the locales which will be supported by the application.
+    | to any of the locales which will be included in the translation
+    | strings.
     |
     */
 
     'locale' => env('APP_LOCALE', 'en'),
 
-    /*
-    |--------------------------------------------------------------------------
-    | Application Fallback Locale
-    |--------------------------------------------------------------------------
-    |
-    | The fallback locale determines the locale to use when the current one
-    | is not available. You may change the value to correspond to any of
-    | the language folders that are provided through your application.
-    |
-    */
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
-    'fallback_locale' => 'en',
+    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
     /*
     |--------------------------------------------------------------------------
@@ -117,24 +100,28 @@ return [
 
     'key' => env('APP_KEY'),
 
-    'cipher' => 'AES-256-CBC',
+    'previous_keys' => [
+        ...array_filter(
+            explode(',', env('APP_PREVIOUS_KEYS', ''))
+        ),
+    ],
 
     /*
     |--------------------------------------------------------------------------
-    | Logging Configuration
+    | Maintenance Mode
     |--------------------------------------------------------------------------
     |
-    | Here you may configure the log settings for your application. Out of
-    | the box, Laravel uses the Monolog PHP logging library. This gives
-    | you a variety of powerful log handlers / formatters to utilize.
-    |
-    | Available Settings: "single", "daily", "syslog", "errorlog"
+    | When your application is in maintenance mode, all requests to your
+    | application will be met with a maintenance page. The mode can be
+    | disabled by calling the "up" command. The mode can be enabled by
+    | calling the "down" command.
     |
     */
 
-    'log' => env('APP_LOG', 'daily'),
-
-    'log_level' => env('APP_LOG_LEVEL', 'debug'),
+    'maintenance' => [
+        'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
+        'store' => env('APP_MAINTENANCE_STORE', 'database'),
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -186,7 +173,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
+        // App\Providers\
 
     ],
 
@@ -239,18 +226,11 @@ return [
 
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Google Recaptcha v3
-    |--------------------------------------------------------------------------
-    |
-    | Google Recaptcha v3 site key and secret key to protect auth forms
-    |
-    */    
-
     'recaptcha' => [
         'site_key' => env('RECAPTCHA_SITE_KEY'),
         'secret_key' => env('RECAPTCHA_SECRET_KEY'),
     ],
+
+    'system_admin_emails' => env('SYSTEM_ADMIN_EMAILS', ''),
 
 ];

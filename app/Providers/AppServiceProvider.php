@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Http\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,8 +17,8 @@ class AppServiceProvider extends ServiceProvider
         require_once app_path() . '/Helpers/functions.php';
 
         // Always redirect to https.
-        if($this->app->environment() === 'production') {
-            $this->app['request']->server->set('HTTPS', true);
+        if ($this->app->environment() === 'production') {
+            $this->app->make('request')->server->set('HTTPS', true);
         }
 
         \Validator::extend('current_password', function ($attribute, $value, $parameters, $validator) {

@@ -38,7 +38,7 @@ class UserPhotoHelperTest extends TestCase
     /** @test */
     public function user_photo_function_returns_default_image_photo_element_if_no_agency_image_path_setting()
     {
-        $user = factory(User::class)->create(['gender_id' => 1]);
+        $user = User::factory()->create(['gender_id' => 1]);
 
         $photoFile = 'images/icon_user_1.png';
 
@@ -54,10 +54,17 @@ class UserPhotoHelperTest extends TestCase
     {
         $photoPath = 'images/user_photo_path.jpg';
 
-        // Ensure the public/storage symlink exists (Laravel convention)
+        // Ensure the public/storage symlink exists and points at this
+        // environment's storage path (a symlink created inside a Docker
+        // container may target a different docroot, e.g. /web).
         $storageLink = public_path('storage');
+        $expectedTarget = storage_path('app/public');
+        if (is_link($storageLink) && readlink($storageLink) !== $expectedTarget) {
+            @unlink($storageLink);
+        }
         if (!is_link($storageLink) && !file_exists($storageLink)) {
-            @symlink(storage_path('app/public'), $storageLink);
+            @symlink($expectedTarget, $storageLink);
+            $storageLinkWasCreated = true;
         }
 
         if (!is_dir(storage_path('app/public/images'))) {
@@ -67,7 +74,7 @@ class UserPhotoHelperTest extends TestCase
 
         $this->assertFileExists(storage_path('app/public/images/user_photo_path.jpg'));
 
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'gender_id'  => 2,
             'photo_path' => $photoPath,
         ]);
@@ -80,8 +87,9 @@ class UserPhotoHelperTest extends TestCase
 
         $this->assertFileExists(storage_path('app/public/images/user_photo_path.jpg'));
         unlink(storage_path('app/public/images/user_photo_path.jpg'));
-        // Clean up symlink we created (skip warning)
-        if (is_link($storageLink)) {
+        // Only remove the symlink if this test created it; leave any
+        // pre-existing environment symlink (e.g. from artisan storage:link) alone.
+        if (isset($storageLinkWasCreated) && is_link($storageLink)) {
             @unlink($storageLink);
         }
         $this->assertFileDoesNotExist(storage_path('app/public/images/user_photo_path.jpg'));
@@ -90,7 +98,7 @@ class UserPhotoHelperTest extends TestCase
     /** @test */
     public function user_photo_function_has_overrideable_attributes()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'gender_id' => 1,
         ]);
 
@@ -112,7 +120,7 @@ class UserPhotoHelperTest extends TestCase
     /** @test */
     public function user_photo_function_returns_default_gender_logo_image_if_user_photo_file_doesnt_exists()
     {
-        $user = factory(User::class)->create([
+        $user = User::factory()->create([
             'gender_id'  => 2,
             'photo_path' => 'images/non_exists_photo_path.jpg',
         ]);

@@ -55,9 +55,9 @@ class UpdateRequest extends FormRequest
         ];
     }
 
-    public function validated()
+    public function validated($key = null, $default = null)
     {
-        $formData = parent::validated();
+        $formData = parent::validated($key, $default);
 
         if (!empty($formData['yod']) || !empty($formData['dod'])) {
             $formData['yod'] = $this->getYod($formData);

@@ -1,62 +1,92 @@
 <?php
 
+namespace Database\Factories;
+
 use App\Couple;
 use App\User;
 use App\UserMetadata;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-/*
-|--------------------------------------------------------------------------
-| Model Factories
-|--------------------------------------------------------------------------
-|
-| Here you may define all of your model factories. Model factories give
-| you a convenient way to create models for testing and seeding your
-| database. Just tell the factory how a default model should look.
-|
-*/
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\User>
+ */
+class UserFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        $name = $this->faker->name;
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
-$factory->define(User::class, function (Faker\Generator $faker) {
-    $name = $faker->name;
-    return [
-        'id'         => $faker->uuid,
-        'name'       => $name,
-        'nickname'   => $name,
-        'gender_id'  => rand(1, 2),
-        'manager_id' => $faker->uuid,
-    ];
-});
+        return [
+            'id'         => $this->faker->uuid,
+            'name'       => $name,
+            'nickname'   => $name,
+            'gender_id'  => rand(1, 2),
+            'manager_id' => $this->faker->uuid,
+        ];
+    }
 
-$factory->state(User::class, 'male', function (Faker\Generator $faker) {
-    return ['gender_id' => 1];
-});
+    /**
+     * Get the state for male gender.
+     */
+    public function male(): static
+    {
+        return $this->state(fn () => ['gender_id' => 1]);
+    }
 
-$factory->state(User::class, 'female', function (Faker\Generator $faker) {
-    return ['gender_id' => 2];
-});
+    /**
+     * Get the state for female gender.
+     */
+    public function female(): static
+    {
+        return $this->state(fn () => ['gender_id' => 2]);
+    }
+}
 
-$factory->define(Couple::class, function (Faker\Generator $faker) {
-    return [
-        'id'         => $faker->uuid,
-        'husband_id' => function () {
-            return factory(User::class)->states('male')->create()->id;
-        },
-        'wife_id'    => function () {
-            return factory(User::class)->states('female')->create()->id;
-        },
-        'manager_id' => function () {
-            return factory(User::class)->create()->id;
-        },
-    ];
-});
+class CoupleFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'id'         => $this->faker->uuid,
+            'husband_id' => function () {
+                return User::factory()->male()->create()->id;
+            },
+            'wife_id'    => function () {
+                return User::factory()->female()->create()->id;
+            },
+            'manager_id' => function () {
+                return User::factory()->create()->id;
+            },
+        ];
+    }
+}
 
-$factory->define(UserMetadata::class, function (Faker\Generator $faker) {
-    return [
-        'id'      => $faker->uuid,
-        'user_id' => function () {
-            return factory(User::class)->create()->id;
-        },
-        'key'     => $faker->name,
-        'value'   => $faker->sentence,
-    ];
-});
+class UserMetadataFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'id'      => $this->faker->uuid,
+            'user_id' => function () {
+                return User::factory()->create()->id;
+            },
+            'key'     => $this->faker->name,
+            'value'   => $this->faker->sentence,
+        ];
+    }
+}

@@ -14,29 +14,29 @@
         </table>
         @if ($childsCount + $spousesCount + $managedUserCount + $managedCoupleCount)
             {{ __('user.replace_delete_text') }}
-            {{ Form::open([
-                'route' => ['users.destroy', $user],
-                'method' => 'delete',
-                'onsubmit' => 'return confirm("'.__('user.replace_confirm').'")',
-            ]) }}
-            {!! FormField::select('replacement_user_id', $replacementUsers, [
-                'label' => false,
-                'placeholder' => __('user.replacement'),
-            ]) !!}
-            {{ Form::submit(__('user.replace_delete_button'), [
-                'name' => 'replace_delete_button',
-                'class' => 'btn btn-danger',
-            ]) }}
-            {{ link_to_route('users.edit', __('app.cancel'), [$user], ['class' => 'btn btn-default pull-right']) }}
-            {{ Form::close() }}
+            <form method="POST" action="{{ route('users.destroy', $user) }}" onsubmit="return confirm('{{ __('user.replace_confirm') }}')">
+                @csrf
+                @method('DELETE')
+                <div class="form-group">
+                    <label for="replacement_user_id">{{ __('user.replacement') }}</label>
+                    <select name="replacement_user_id" class="form-control">
+                        <option value="">{{ __('user.replacement') }}</option>
+                        @foreach($replacementUsers as $id => $name)
+                            <option value="{{ $id }}">{{ $name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" name="replace_delete_button" class="btn btn-danger">{{ __('user.replace_delete_button') }}</button>
+                <a href="{{ route('users.edit', $user) }}" class="btn btn-default pull-right">{{ __('app.cancel') }}</a>
+            </form>
         @else
-            {!! FormField::delete(
-                ['route' => ['users.destroy', $user]],
-                __('user.delete_confirm_button'),
-                ['class' => 'btn btn-danger'],
-                ['user_id' => $user->id]
-            ) !!}
-            {{ link_to_route('users.edit', __('app.cancel'), [$user], ['class' => 'btn btn-default']) }}
+            <form method="POST" action="{{ route('users.destroy', $user) }}">
+                @csrf
+                @method('DELETE')
+                <input type="hidden" name="user_id" value="{{ $user->id }}">
+                <button type="submit" class="btn btn-danger">{{ __('user.delete_confirm_button') }}</button>
+                <a href="{{ route('users.edit', $user) }}" class="btn btn-default">{{ __('app.cancel') }}</a>
+            </form>
         @endif
     </div>
 </div>

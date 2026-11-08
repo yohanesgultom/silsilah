@@ -56,7 +56,14 @@
                             <label for="gender_id" class="col-md-4 control-label">{{ trans('user.gender') }}</label>
 
                             <div class="col-md-6">
-                                {!! FormField::radios('gender_id', [1 => trans('app.male'), 2 => trans('app.female')], ['label' => false]) !!}
+                                <div class="form-group">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="gender_id" value="1" @if(old('gender_id') == 1) checked @endif> {{ trans('app.male') }}
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="gender_id" value="2" @if(old('gender_id') == 2) checked @endif> {{ trans('app.female') }}
+                                    </label>
+                                </div>
                             </div>
                         </div>
 

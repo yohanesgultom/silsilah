@@ -33,6 +33,6 @@ class ChangePasswordController extends Controller
             $updateResponse = array('success' => __('auth.change_password_success'));
         }
 
-        return redirect()->back()->with($updateResponse);
+        return redirect()->route('profile')->with($updateResponse);
     }
 }

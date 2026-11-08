@@ -36,11 +36,13 @@ function formatSizeUnits($bytes)
  */
 function userPhoto(User $user, $attributes = [])
 {
-    return Html::image(
-        userPhotoPath($user->photo_path, $user->gender_id),
-        null,
-        $attributes
-    );
+    $photoPath = userPhotoPath($user->photo_path, $user->gender_id);
+    $img = '<img src="'.$photoPath.'"';
+    foreach ($attributes as $key => $value) {
+        $img .= ' '.$key.'="'.$value.'"';
+    }
+    $img .= '>';
+    return new \Illuminate\Support\HtmlString($img);
 }
 
 /**
@@ -61,6 +63,10 @@ function userPhotoPath($photoPath, $genderId)
 
 function is_system_admin(User $user)
 {
+    if (method_exists($user, 'is_system_admin')) {
+        return $user->is_system_admin();
+    }
+    // Fallback for non-App\User instances
     if ($user->email) {
         if (config('app.system_admin_emails')) {
             $adminEmails = explode(';', config('app.system_admin_emails'));
@@ -69,4 +75,23 @@ function is_system_admin(User $user)
     }
 
     return false;
+}
+
+/**
+ * Generate an HTML link to a named route.
+ *
+ * @param  string  $route
+ * @param  string  $text
+ * @param  array  $parameters
+ * @param  array  $attributes
+ * @return \Illuminate\Support\HtmlString
+ */
+function link_to_route($route, $text, $parameters = [], $attributes = [])
+{
+    $url = route($route, $parameters);
+    $attributesStr = '';
+    foreach ($attributes as $key => $value) {
+        $attributesStr .= ' '.$key.'="'.e($value).'"';
+    }
+    return new \Illuminate\Support\HtmlString('<a href="'.$url.'"'.$attributesStr.'>'.e($text).'</a>');
 }

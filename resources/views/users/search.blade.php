@@ -9,15 +9,15 @@
 </h2>
 
 
-{{ Form::open(['method' => 'get','class' => '']) }}
+<form method="get" class="">
 <div class="input-group">
-    {{ Form::text('q', request('q'), ['class' => 'form-control', 'placeholder' => trans('app.search_your_family_placeholder')]) }}
+    <input type="text" name="q" class="form-control" placeholder="{{ trans('app.search_your_family_placeholder') }}" value="{{ request('q') }}">
     <span class="input-group-btn">
-        {{ Form::submit(trans('app.search'), ['class' => 'btn btn-default']) }}
-        {{ link_to_route('users.search', 'Reset', [], ['class' => 'btn btn-default']) }}
+        <button type="submit" class="btn btn-default">{{ trans('app.search') }}</button>
+        <a href="{{ route('users.search') }}" class="btn btn-default">Reset</a>
     </span>
 </div>
-{{ Form::close() }}
+</form>
 
 @if (request('q'))
 <br>
@@ -41,8 +41,8 @@
                 <div>{{ trans('user.mother') }} : {{ $user->mother_id ? $user->mother->name : '' }}</div>
             </div>
             <div class="panel-footer">
-                {{ link_to_route('users.show', trans('app.show_profile'), [$user->id], ['class' => 'btn btn-default btn-xs']) }}
-                {{ link_to_route('users.chart', trans('app.show_family_chart'), [$user->id], ['class' => 'btn btn-default btn-xs']) }}
+                <a href="{{ route('users.show', $user->id) }}" class="btn btn-default btn-xs">{{ trans('app.show_profile') }}</a>
+                <a href="{{ route('users.chart', $user->id) }}" class="btn btn-default btn-xs">{{ trans('app.show_family_chart') }}</a>
             </div>
         </div>
     </div>

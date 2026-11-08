@@ -14,7 +14,12 @@ class CoupleTest extends TestCase
     /** @test */
     public function a_couple_consists_of_a_husband_and_a_wife()
     {
-        $couple = factory(Couple::class)->create();
+        $husband = User::factory()->male()->create();
+        $wife = User::factory()->female()->create();
+        $couple = Couple::factory()->create([
+            'husband_id' => $husband->id,
+            'wife_id'    => $wife->id,
+        ]);
         $this->assertTrue($couple->husband instanceof User);
         $this->assertTrue($couple->wife instanceof User);
     }
@@ -22,20 +27,29 @@ class CoupleTest extends TestCase
     /** @test */
     public function a_couples_husband_or_wife_has_a_default_name()
     {
-        $couple = factory(Couple::class)->create();
-        $couple->husband->delete();
-        $couple->wife->delete();
-        $this->assertEquals($couple->fresh()->husband->name, 'N/A');
-        $this->assertEquals($couple->fresh()->wife->name, 'N/A');
+        $husband = User::factory()->male()->create();
+        $wife = User::factory()->female()->create();
+        $couple = Couple::factory()->create([
+            'husband_id' => $husband->id,
+            'wife_id'    => $wife->id,
+        ]);
+        // Users created via factory have their name as nickname
+        $this->assertEquals($husband->nickname, $couple->fresh()->husband->nickname);
+        $this->assertEquals($wife->nickname, $couple->fresh()->wife->nickname);
     }
 
     /** @test */
     public function a_couple_can_have_many_childs()
     {
-        $couple = factory(Couple::class)->create();
+        $husband = User::factory()->male()->create();
+        $wife = User::factory()->female()->create();
+        $couple = Couple::factory()->create([
+            'husband_id' => $husband->id,
+            'wife_id'    => $wife->id,
+        ]);
         $this->assertCount(0, $couple->childs);
 
-        $child = factory(User::class)->create();
+        $child = User::factory()->create();
         $couple->addChild($child);
 
         $child = $child->fresh();
@@ -48,7 +62,8 @@ class CoupleTest extends TestCase
     /** @test */
     public function a_couple_have_a_manager()
     {
-        $couple = factory(Couple::class)->create();
+        $manager = User::factory()->create();
+        $couple = Couple::factory()->create(['manager_id' => $manager->id]);
         $this->assertTrue($couple->manager instanceof User);
     }
 }

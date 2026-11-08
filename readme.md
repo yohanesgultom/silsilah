@@ -1,16 +1,7 @@
 ![Laravel](https://laravel.com/assets/img/components/logo-laravel.svg)
 
-<h1 align="center">Genealogy Application</h1>
+<h1 align="center">Silsilah</h1>
 
-[![Build Status](https://travis-ci.org/nafiesl/silsilah.svg?branch=master)](https://travis-ci.org/nafiesl/silsilah)
-[![Coverage Status](https://coveralls.io/repos/github/nafiesl/silsilah/badge.svg?branch=master)](https://coveralls.io/github/nafiesl/silsilah?branch=master)
-
-> **Development in progress**  
-> In development progress, any changes of table structure **will be updated** directly to corresponding **migration file**.
->
-> [Baca README Bahasa Indonesia](readme.id.md)
-
-## About
 Genealogy (Silsilah) application to record our family members.
 
 ## Features
@@ -41,12 +32,12 @@ This application uses Bahasa Indonesia and English based on `config.locale`.
 7. Phone Number
 8. Email
 
-### Couple Attribute (TODO)
-1. Husband
-2. Wife
-3. Marriage Date
-4. Divorce Date
-5. Address
+
+### Fork Features
+1. Upgrade Laravel to 11 and PHP 8.2.x
+2. Add Google Recaptcha verification for login
+3. Disable registration once at least 1 user created
+
 
 ## How to Install
 
@@ -54,13 +45,27 @@ This application uses Bahasa Indonesia and English based on `config.locale`.
 
 This application can be installed on local server and online server with these specifications :
 
-1. PHP 7.3 (and meet other [Laravel 8.x server requirements](https://laravel.com/docs/8.x/deployment#server-requirements)),
+1. PHP 8.2.x (and meet other Laravel 11.x server requirements),
 2. MySQL or MariaDB database,
 3. SQlite (for automated testing).
 
 ### Installation Steps
 
-1. Clone the repo : `git clone https://github.com/nafiesl/silsilah.git`
+Docker Compose:
+
+1. `cp .env.example .env`
+2. `docker compose up -d`
+3. `docker compose exec web /web/install.sh`
+4. Register as new user to start using the application.
+5. Add the registered email address to the `.env` file:
+    ```
+    SYSTEM_ADMIN_EMAILS=admin@email.com;other_admin@email.com
+    ```
+
+
+Manual:
+
+1. Clone the repo
 2. `cd silsilah`
 3. `composer install`
 4. `cp .env.example .env`
@@ -108,7 +113,7 @@ This family tree view is using the [Horizontal Family Tree CSS](https://codepen.
 ![Profil Edit Form](public/images/06-edit-profil.jpg "Profil Edit Form")
 
 #### Automated Testing
-![Automated Testing](public/images/07-automated-testing.jpg "Automated Testing")
+![Automated Testing](public/images/08-automated-testing.png "Automated Testing")
 
 ## License
 

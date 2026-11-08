@@ -1,5 +1,5 @@
 // Variables
 @import "variables";
 
-// Bootstrap
-@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+// Bootstrap (resolved via includePaths in webpack.mix.js)
+@import "bootstrap";

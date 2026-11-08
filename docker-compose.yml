@@ -1,0 +1,36 @@
+# reusables
+x-php-node-laravel: &php-node-laravel
+  build:
+    context: .
+  image: php-node-laravel:8.2
+  volumes:
+    - ./:/web
+  working_dir: /web
+
+# docker compose services
+services:
+
+  test:
+    profiles:
+      - test
+    tty: false
+    <<: *php-node-laravel
+    command: bash -c "vendor/bin/phpunit </dev/null"
+
+  web:
+    <<: *php-node-laravel
+    ports:
+      - "8000:8000"
+    command: bash -c "composer install && npm install && php artisan serve --host 0.0.0.0"
+
+  mysql:
+    image: mysql:8.0.25
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"

@@ -12,7 +12,7 @@
 | **Framework** | Laravel 8.x (PHP 7.3+ / 8.0 compatible) |
 | **Database** | MySQL/MariaDB (production) · SQLite `:memory:` (tests) |
 | **Frontend** | Blade + Bootstrap 3 (via `laravel-mix`) · Leaflet maps for cemetery locations |
-| **Auth** | Laravel built-in (`Auth::routes`), registration **disabled** in `routes/web.php` |
+| **Auth** | Explicit auth routes in `routes/web.php` (login, register, password reset) — auth scaffolding traits implemented directly (removed from framework in Laravel 11) |
 | **Admin** | Email-based allow-list in `SYSTEM_ADMIN_EMAILS` env var |
 | **UUIDs** | All primary keys are UUID strings (Ramsey/UUID) — no auto-increment |
 | **Lang** | EN / ID via `config/app.locale` (middleware `App\Http\Middleware\Lang`) |
@@ -159,7 +159,7 @@ $couple->addChild(User $user)  // sets parent_id + father_id + mother_id atomica
 | **Admin** | `admin` (`AdminOnly`) | `/backups/*` (resource + upload/restore/download) |
 | **Guest** | `guest` | `/login`, `/register` (**disabled**), password reset |
 
-**Auth routes** (`Auth::routes(['register' => false])`) — registration disabled intentionally.
+**Auth routes** (defined explicitly in `routes/web.php`, not via `Auth::routes()`) — login, register, logout, password reset/change. The Laravel 11+ framework no longer ships the auth scaffolding traits (`AuthenticatesUsers`, `RegistersUsers`, `ResetsPasswords`, `SendsPasswordResetEmails`), so each action is implemented directly in `app/Http/Controllers/Auth/*Controller.php`.
 
 **Route naming convention:** `users.show`, `users.edit`, `family-actions.set-father`, `couples.update`, etc.
 
@@ -171,7 +171,7 @@ $couple->addChild(User $user)  // sets parent_id + father_id + mother_id atomica
 |-------|------|--------|-------|
 | **Unit** | PHPUnit 9 | `phpunit.xml` → `DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:` | Model accessors, relationships, policies |
 | **Feature** | Laravel BrowserKitTesting | Same in-memory SQLite | Full HTTP request/response cycle, auth via `loginAsUser()` |
-| **Coverage** | php-coveralls (Travis) | `vendor/bin/phpunit --coverage-clover` | Runs on CI only |
+| **Coverage** | PHPUnit (no CI service) | `vendor/bin/phpunit --coverage-clover` | Run locally when needed |
 
 ### Running Tests Locally
 
@@ -278,6 +278,15 @@ EXPOSE 9000
 
 **No `docker-compose.yml` exists** — single container for PHP-FPM. For production you would add nginx + mysql containers.
 
+### Running command
+
+Run any command using Docker with `run.sh` eg:
+
+```bash
+./run.sh composer install --no-interaction --no-scripts
+./run.sh php artisan routes
+```
+
 ### Heroku / Procfile
 
 ```
@@ -305,7 +314,7 @@ npm run prod   # runs webpack production build via laravel-mix
 | **Translations** | `resources/lang/{en,id}/*.php` — use `__('key')` or `trans('key')` |
 | **Timezone** | `config/app.timezone` — default UTC; user-facing dates via Carbon |
 | **CSRF** | Enabled globally; AJAX must send `X-CSRF-TOKEN` header |
-| **Registration** | Disabled — only existing users can add family members |
+| **Registration** | Open (`/register`) — new users become managers of their own record |
 
 ---
 
@@ -355,7 +364,7 @@ vendor/bin/phpunit tests/Feature/UsersProfileTest.php
 # Run with verbose output
 vendor/bin/phpunit --verbose
 
-# Run with coverage (requires php-coveralls)
+# Run with coverage (for local inspection)
 vendor/bin/phpunit --coverage-clover build/logs/clover.xml
 ```
 
@@ -442,8 +451,6 @@ docker run --rm -it -v "$(pwd):/app" silsilah-dev bash   # Interactive shell
 
 - **Upstream Laravel 8 Docs:** https://laravel.com/docs/8.x
 - **Original Repo:** https://github.com/nafiesl/silsilah
-- **Travis CI:** https://travis-ci.org/nafiesl/silsilah
-- **Coveralls:** https://coveralls.io/github/nafiesl/silsilah
 - **Horizontal Family Tree CSS (used in UI):** https://codepen.io/P233/pen/Kzbsi
 
 ---

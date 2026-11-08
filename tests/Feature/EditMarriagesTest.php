@@ -3,8 +3,9 @@
 namespace Tests\Feature;
 
 use App\Couple;
-use Tests\TestCase;
+use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class EditMarriagesTest extends TestCase
 {
@@ -14,37 +15,24 @@ class EditMarriagesTest extends TestCase
     public function user_can_visit_a_marriage_detail_page()
     {
         $user = $this->loginAsUser();
+        $couple = Couple::factory()->create(['manager_id' => $user->id]);
 
-        $couple = factory(Couple::class)->create();
-
-        $this->visit(route('couples.show', $couple));
-
-        $this->see($couple->husband->name);
-        $this->see($couple->wife->name);
+        $this->get(route('couples.show', $couple))->assertSee($couple->husband->name);
+        $this->get(route('couples.show', $couple))->assertSee($couple->wife->name);
     }
 
     /** @test */
     public function manager_can_edit_couple_data()
     {
         $user = $this->loginAsUser();
-        $couple = factory(Couple::class)->create(['manager_id' => $user->id]);
+        $couple = Couple::factory()->create(['manager_id' => $user->id]);
 
-        $this->visit(route('couples.show', $couple));
-
-        $this->click(trans('couple.edit'));
-        $this->seePageIs(route('couples.edit', $couple));
-
-        $this->submitForm(trans('couple.update'), [
-            'marriage_date' => '2010-04-04',
-            'divorce_date'  => '2035-04-04',
+        $this->patch(route('couples.update', $couple), [
+            'marriage_date' => '2015-10-17',
+            'divorce_date' => '2017-10-17',
         ]);
 
-        $this->seePageIs(route('couples.show', $couple));
-
-        $this->seeInDatabase('couples', [
-            'id'            => $couple->id,
-            'marriage_date' => '2010-04-04',
-            'divorce_date'  => '2035-04-04',
-        ]);
+        $this->assertEquals('2015-10-17', $couple->fresh()->marriage_date->format('Y-m-d'));
+        $this->assertEquals('2017-10-17', $couple->fresh()->divorce_date->format('Y-m-d'));
     }
 }

@@ -3,13 +3,14 @@
 namespace App;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Ramsey\Uuid\Uuid;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use HasFactory, Notifiable;
 
     const METADATA_KEYS = [
         'cemetery_location_name',
@@ -128,17 +129,17 @@ class User extends Authenticatable
     public function profileLink($type = 'profile')
     {
         $type = ($type == 'chart') ? 'chart' : 'show';
-        return link_to_route('users.'.$type, $this->name, [$this->id]);
+        return '<a href="'.route('users.'.$type, [$this->id]).'">'.$this->name.'</a>';
     }
 
     public function fatherLink()
     {
-        return $this->father_id ? link_to_route('users.show', $this->father->name, [$this->father_id]) : null;
+        return $this->father_id ? '<a href="'.route('users.show', [$this->father_id]).'">'.$this->father->name.'</a>' : null;
     }
 
     public function motherLink()
     {
-        return $this->mother_id ? link_to_route('users.show', $this->mother->name, [$this->mother_id]) : null;
+        return $this->mother_id ? '<a href="'.route('users.show', [$this->mother_id]).'">'.$this->mother->name.'</a>' : null;
     }
 
     public function wifes()
@@ -349,5 +350,17 @@ class User extends Authenticatable
         }
 
         return $defaultValue;
+    }
+
+    public function is_system_admin()
+    {
+        if ($this->email) {
+            if (config('app.system_admin_emails')) {
+                $adminEmails = explode(';', config('app.system_admin_emails'));
+                return in_array($this->email, $adminEmails);
+            }
+        }
+
+        return false;
     }
 }

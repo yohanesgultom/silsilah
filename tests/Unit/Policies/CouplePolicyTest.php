@@ -16,9 +16,9 @@ class CouplePolicyTest extends TestCase
     public function manager_can_edit_couples()
     {
         $otherCoupleManagerId = Str::random();
-        $manager = factory(User::class)->create();
-        $couple = factory(Couple::class)->create(['manager_id' => $manager->id]);
-        $otherCouple = factory(Couple::class)->create(['manager_id' => $otherCoupleManagerId]);
+        $manager = User::factory()->create();
+        $couple = Couple::factory()->create(['manager_id' => $manager->id]);
+        $otherCouple = Couple::factory()->create(['manager_id' => $otherCoupleManagerId]);
 
         $this->assertTrue($manager->can('edit', $couple));
         $this->assertFalse($manager->can('edit', $otherCouple));
@@ -31,10 +31,10 @@ class CouplePolicyTest extends TestCase
         $otherCoupleManagerId = Str::random();
         config(['app.system_admin_emails' => $adminEmail]);
 
-        $manager = factory(User::class)->create();
-        $admin = factory(User::class)->create(['email' => $adminEmail]);
-        $couple = factory(Couple::class)->create(['manager_id' => $manager->id]);
-        $otherCouple = factory(Couple::class)->create(['manager_id' => $otherCoupleManagerId]);
+        $manager = User::factory()->create();
+        $admin = User::factory()->create(['email' => $adminEmail]);
+        $couple = Couple::factory()->create(['manager_id' => $manager->id]);
+        $otherCouple = Couple::factory()->create(['manager_id' => $otherCoupleManagerId]);
 
         $this->assertTrue($admin->can('edit', $couple));
         $this->assertTrue($admin->can('edit', $otherCouple));

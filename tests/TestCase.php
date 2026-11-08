@@ -3,7 +3,8 @@
 namespace Tests;
 
 use App\User;
-use Laravel\BrowserKitTesting\TestCase as BaseTestCase;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Tests\CreatesApplication;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -17,9 +18,10 @@ abstract class TestCase extends BaseTestCase
         $overrides = array_merge([
             'id'         => $userId,
             'manager_id' => $userId,
+            'password'  => bcrypt('secret'),
         ], $overrides);
 
-        $user = factory(User::class)->create($overrides);
+        $user = User::factory()->create($overrides);
         $this->actingAs($user);
 
         return $user;
