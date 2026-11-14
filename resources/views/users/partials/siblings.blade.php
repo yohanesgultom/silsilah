@@ -5,7 +5,7 @@
             @foreach($user->siblings() as $sibling)
             <tr>
                 <td>
-                    {{ $sibling->profileLink() }} ({{ $sibling->gender }})
+                    {!! $sibling->profileLink() !!} ({{ $sibling->gender }})
                 </td>
             </tr>
             @endforeach

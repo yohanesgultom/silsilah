@@ -14,7 +14,7 @@
         {{ link_to_route('users.show', __('app.show_profile').' '.$user->name, [$user->id], ['class' => 'btn btn-default']) }}
     </div>
     <h2 class="page-header">
-        {{ __('user.edit') }} {{ $user->profileLink() }}
+        {{ __('user.edit') }} {!! $user->profileLink() !!}
     </h2>
     <div class="row">
         <div class="col-md-2">@include('users.partials.edit_nav_tabs')</div>

@@ -7,8 +7,8 @@
             <td class="col-xs-2 text-center">{{ trans('couple.marriage_date') }}</td>
         </tr>
         <tr>
-            <td class="text-center lead" style="border-top: none;">{{ $couple->husband->profileLink() }}</td>
-            <td class="text-center lead" style="border-top: none;">{{ $couple->wife->profileLink() }}</td>
+            <td class="text-center lead" style="border-top: none;">{!! $couple->husband->profileLink() !!}</td>
+            <td class="text-center lead" style="border-top: none;">{!! $couple->wife->profileLink() !!}</td>
             <td class="text-center lead" style="border-top: none;">{{ $couple->childs->count() }}</td>
             <td class="text-center lead" style="border-top: none;">{{ $couple->marriage_date }}</td>
         </tr>
@@ -18,11 +18,11 @@
 <ul class="list-group visible-xs">
     <li class="list-group-item">
         {{ trans('couple.husband') }}
-        <span class="pull-right">{{ $couple->husband->profileLink() }}</span>
+        <span class="pull-right">{!! $couple->husband->profileLink() !!}</span>
     </li>
     <li class="list-group-item">
         {{ trans('couple.wife') }}
-        <span class="pull-right">{{ $couple->wife->profileLink() }}</span>
+        <span class="pull-right">{!! $couple->wife->profileLink() !!}</span>
     </li>
     <li class="list-group-item">
         {{ trans('couple.childs_count') }}

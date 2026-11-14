@@ -129,17 +129,17 @@ class User extends Authenticatable
     public function profileLink($type = 'profile')
     {
         $type = ($type == 'chart') ? 'chart' : 'show';
-        return '<a href="'.route('users.'.$type, [$this->id]).'">'.$this->name.'</a>';
+        return '<a href="'.route('users.'.$type, [$this->id]).'">'.e($this->name).'</a>';
     }
 
     public function fatherLink()
     {
-        return $this->father_id ? '<a href="'.route('users.show', [$this->father_id]).'">'.$this->father->name.'</a>' : null;
+        return $this->father_id ? '<a href="'.route('users.show', [$this->father_id]).'">'.e($this->father->name).'</a>' : null;
     }
 
     public function motherLink()
     {
-        return $this->mother_id ? '<a href="'.route('users.show', [$this->mother_id]).'">'.$this->mother->name.'</a>' : null;
+        return $this->mother_id ? '<a href="'.route('users.show', [$this->mother_id]).'">'.e($this->mother->name).'</a>' : null;
     }
 
     public function wifes()

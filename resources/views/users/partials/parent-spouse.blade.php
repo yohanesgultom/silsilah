@@ -25,13 +25,13 @@
                             </div>
                         </form>
                         @else
-                            {{ $user->fatherLink() }}
+                            {!! $user->fatherLink() !!}
                             <div class="pull-right">
                                 <a href="{{ route('users.show', [$user->id, 'action' => 'set_father']) }}" class="btn btn-link btn-xs">{{ __('user.set_father') }}</a>
                             </div>
                         @endif
                     @else
-                        {{ $user->fatherLink() }}
+                        {!! $user->fatherLink() !!}
                     @endcan
                 </td>
             </tr>
@@ -57,13 +57,13 @@
                             </div>
                         </form>
                         @else
-                            {{ $user->motherLink() }}
+                            {!! $user->motherLink() !!}
                             <div class="pull-right">
                                 <a href="{{ route('users.show', [$user->id, 'action' => 'set_mother']) }}" class="btn btn-link btn-xs">{{ __('user.set_mother') }}</a>
                             </div>
                         @endif
                     @else
-                        {{ $user->motherLink() }}
+                        {!! $user->motherLink() !!}
                     @endcan
                 </td>
             </tr>
@@ -114,7 +114,7 @@
                     @if ($user->wifes->isEmpty() == false)
                         <ul class="list-unstyled">
                             @foreach($user->wifes as $wife)
-                            <li>{{ $wife->profileLink() }}</li>
+                            <li>{!! $wife->profileLink() !!}</li>
                             @endforeach
                         </ul>
                     @endif
@@ -159,7 +159,7 @@
                     @if ($user->husbands->isEmpty() == false)
                         <ul class="list-unstyled">
                             @foreach($user->husbands as $husband)
-                            <li>{{ $husband->profileLink() }}</li>
+                            <li>{!! $husband->profileLink() !!}</li>
                             @endforeach
                         </ul>
                     @endif

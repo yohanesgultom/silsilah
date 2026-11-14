@@ -9,31 +9,31 @@
             <tr>
                 <th style="width: 9%">{{ trans('user.grand_father') }} & {{ trans('user.grand_mother') }}</th>
                 <td class="text-center">
-                    {{ $fatherGrandpa ? $fatherGrandpa->profileLink('chart') : '?' }}
+                    {!! $fatherGrandpa ? $fatherGrandpa->profileLink('chart') : '?' !!}
                 </td>
                 <td class="text-center">
-                    {{ $fatherGrandma ? $fatherGrandma->profileLink('chart') : '?' }}
+                    {!! $fatherGrandma ? $fatherGrandma->profileLink('chart') : '?' !!}
                 </td>
                 <td class="text-center">
-                    {{ $motherGrandpa ? $motherGrandpa->profileLink('chart') : '?' }}
+                    {!! $motherGrandpa ? $motherGrandpa->profileLink('chart') : '?' !!}
                 </td>
                 <td class="text-center">
-                    {{ $motherGrandma ? $motherGrandma->profileLink('chart') : '?' }}
+                    {!! $motherGrandma ? $motherGrandma->profileLink('chart') : '?' !!}
                 </td>
             </tr>
             <tr>
                 <th>{{ trans('user.father') }} & {{ trans('user.mother') }}</th>
                 <td class="text-center" colspan="2">
-                    {{ $father ? $father->profileLink('chart') : '?' }}
+                    {!! $father ? $father->profileLink('chart') : '?' !!}
                 </td>
                 <td class="text-center" colspan="2">
-                    {{ $mother ? $mother->profileLink('chart') : '?' }}
+                    {!! $mother ? $mother->profileLink('chart') : '?' !!}
                 </td>
             </tr>
             <tr>
                 <th>&nbsp;</th>
                 <td class="text-center lead" colspan="4">
-                    <strong>{{ $user->profileLink('chart') }} ({{ $user->gender }})</strong>
+                    <strong>{!! $user->profileLink('chart') !!} ({{ $user->gender }})</strong>
                 </td>
             </tr>
             <tr>
@@ -44,10 +44,10 @@
                     <div class="">
                         @foreach($chunkedChild as $child)
                         <div class="col-md-3">
-                            <h4><strong>{{ ++$no }}. {{ $child->profileLink('chart') }} ({{ $child->gender }})</strong></h4>
+                            <h4><strong>{{ ++$no }}. {!! $child->profileLink('chart') !!} ({{ $child->gender }})</strong></h4>
                             <ul style="padding-left: 30px">
                                 @foreach($child->childs as $grand)
-                                <li>{{ $grand->profileLink('chart') }} ({{ $grand->gender }})</li>
+                                <li>{!! $grand->profileLink('chart') !!} ({{ $grand->gender }})</li>
                                 @endforeach
                             </ul>
                         </div>
