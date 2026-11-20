@@ -33,7 +33,7 @@
             <tr>
                 <th>&nbsp;</th>
                 <td class="text-center lead" colspan="4">
-                    <strong>{!! $user->profileLink('chart') !!} ({{ $user->gender }})</strong>
+                    <strong>{!! $user->profileLink('chart') !!} {{ $user->gender }}</strong>
                 </td>
             </tr>
             <tr>
@@ -44,10 +44,10 @@
                     <div class="">
                         @foreach($chunkedChild as $child)
                         <div class="col-md-3">
-                            <h4><strong>{{ ++$no }}. {!! $child->profileLink('chart') !!} ({{ $child->gender }})</strong></h4>
+                            <h4><strong>{{ ++$no }}. {!! $child->profileLink('chart') !!} {{ $child->gender }}</strong></h4>
                             <ul style="padding-left: 30px">
                                 @foreach($child->childs as $grand)
-                                <li>{!! $grand->profileLink('chart') !!} ({{ $grand->gender }})</li>
+                                <li>{!! $grand->profileLink('chart') !!} {{ $grand->gender }}</li>
                                 @endforeach
                             </ul>
                         </div>

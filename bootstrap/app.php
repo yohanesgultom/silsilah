@@ -14,7 +14,9 @@ return Application::configure(dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->web(append: [
+            \App\Http\Middleware\Lang::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

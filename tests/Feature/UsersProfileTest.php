@@ -54,7 +54,7 @@ class UsersProfileTest extends TestCase
         $response = $this->get(route('users.edit', $user->id));
         $response->assertStatus(200);
 
-        $response = $this->patch(route('users.update', $user->id), [
+        $response = $this->post(route('users.update', $user->id), [
             'nickname'    => 'Nama Panggilan',
             'name'        => 'Nama User',
             'gender_id'   => 1,
@@ -86,7 +86,7 @@ class UsersProfileTest extends TestCase
         $response = $this->get(route('users.edit', $user->id));
         $response->assertStatus(200);
 
-        $response = $this->patch(route('users.update', $user->id), [
+        $response = $this->post(route('users.update', $user->id), [
             'dob' => '',
             'yob' => '2003',
         ]);
@@ -110,7 +110,7 @@ class UsersProfileTest extends TestCase
         $response = $this->get(route('users.edit', [$user->id, 'tab' => 'contact_address']));
         $response->assertStatus(200);
 
-        $response = $this->patch(route('users.update', $user->id), [
+        $response = $this->post(route('users.update', $user->id), [
             'address' => 'Jln. Angkasa, No. 70',
             'city'    => 'Nama Kota',
             'phone'   => '081234567890',
@@ -136,7 +136,7 @@ class UsersProfileTest extends TestCase
         $response = $this->get(route('users.edit', [$user->id, 'tab' => 'login_account']));
         $response->assertStatus(200);
 
-        $response = $this->patch(route('users.update', $user->id), [
+        $response = $this->post(route('users.update', $user->id), [
             'email'    => '',
             'password' => '',
         ]);
@@ -159,7 +159,7 @@ class UsersProfileTest extends TestCase
         $response = $this->get(route('users.edit', [$user->id, 'tab' => 'death']));
         $response->assertStatus(200);
 
-        $response = $this->patch(route('users.update', $user->id), [
+        $response = $this->post(route('users.update', $user->id), [
             'dod' => '2003-10-17',
             'yod' => '',
         ]);
@@ -183,7 +183,7 @@ class UsersProfileTest extends TestCase
         $response = $this->get(route('users.edit', [$user->id, 'tab' => 'death']));
         $response->assertStatus(200);
 
-        $response = $this->patch(route('users.update', $user->id), [
+        $response = $this->post(route('users.update', $user->id), [
             'dod' => '',
             'yod' => '2003',
         ]);
@@ -207,7 +207,7 @@ class UsersProfileTest extends TestCase
         $response = $this->get(route('users.edit', [$user->id, 'tab' => 'death']));
         $response->assertStatus(200);
 
-        $response = $this->patch(route('users.update', $user->id), [
+        $response = $this->post(route('users.update', $user->id), [
             'dod'                         => '',
             'yod'                         => '2003',
             'cemetery_location_name'      => 'Some name',
@@ -274,7 +274,7 @@ class UsersProfileTest extends TestCase
         $response = $this->get(route('users.edit', [$user->id, 'tab' => 'login_account']));
         $response->assertStatus(200);
 
-        $response = $this->patch(route('users.update', $user->id), [
+        $response = $this->post(route('users.update', $user->id), [
             'email'    => 'user@mail.com',
             'password' => 'Secr3t',
         ]);
@@ -297,7 +297,7 @@ class UsersProfileTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee(route('users.edit', [$user->id, 'tab' => 'login_account']));
 
-        $response = $this->patch(route('users.update', $user->id), [
+        $response = $this->post(route('users.update', $user->id), [
             'email'    => 'user@mail.com',
             'password' => '',
         ]);
@@ -323,7 +323,7 @@ class UsersProfileTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee(route('users.edit', [$user->id, 'tab' => 'login_account']));
 
-        $response = $this->patch(route('users.update', $user->id), [
+        $response = $this->post(route('users.update', $user->id), [
             'email'    => 'user@mail.com',
             'password' => '',
         ]);
@@ -345,7 +345,7 @@ class UsersProfileTest extends TestCase
         $user = $this->loginAsUser();
         $this->assertNull($user->photo_path);
 
-        $response = $this->patch(route('users.photo-upload', $user->id), [
+        $response = $this->post(route('users.photo-upload', $user->id), [
             'photo' => \Illuminate\Http\Testing\File::fake()->image('avatar.png'),
         ]);
 

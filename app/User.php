@@ -268,7 +268,7 @@ class User extends Authenticatable
             $ageDetail = Carbon::parse($this->dob)->diffInYears($this->dod);
         }
 
-        return $ageDetail;
+        return floor($ageDetail);
     }
 
     public function getAgeDetailAttribute()

@@ -43,11 +43,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('profile-search', [\App\Http\Controllers\UsersController::class, 'search'])->name('users.search');
     Route::get('users/{user}', [\App\Http\Controllers\UsersController::class, 'show'])->name('users.show');
     Route::get('users/{user}/edit', [\App\Http\Controllers\UsersController::class, 'edit'])->name('users.edit');
-    Route::patch('users/{user}', [\App\Http\Controllers\UsersController::class, 'update'])->name('users.update');
+    Route::post('users/{user}', [\App\Http\Controllers\UsersController::class, 'update'])->name('users.update');
     Route::get('users/{user}/chart', [\App\Http\Controllers\UsersController::class, 'chart'])->name('users.chart');
     Route::get('users/{user}/tree', [\App\Http\Controllers\UsersController::class, 'tree'])->name('users.tree');
     Route::get('users/{user}/death', [\App\Http\Controllers\UsersController::class, 'death'])->name('users.death');
-    Route::patch('users/{user}/photo-upload', [\App\Http\Controllers\UsersController::class, 'photoUpload'])->name('users.photo-upload');
+    Route::post('users/{user}/photo-upload', [\App\Http\Controllers\UsersController::class, 'photoUpload'])->name('users.photo-upload');
     Route::delete('users/{user}', [\App\Http\Controllers\UsersController::class, 'destroy'])->name('users.destroy');
 
     Route::get('users/{user}/marriages', [\App\Http\Controllers\UserMarriagesController::class, 'index'])->name('users.marriages');
@@ -59,6 +59,6 @@ Route::group(['middleware' => 'auth'], function () {
      */
     Route::get('couples/{couple}', [\App\Http\Controllers\CouplesController::class, 'show'])->name('couples.show');
     Route::get('couples/{couple}/edit', [\App\Http\Controllers\CouplesController::class, 'edit'])->name('couples.edit');
-    Route::patch('couples/{couple}', [\App\Http\Controllers\CouplesController::class, 'update'])->name('couples.update');
+    Route::post('couples/{couple}', [\App\Http\Controllers\CouplesController::class, 'update'])->name('couples.update');
 });
 

@@ -27,7 +27,7 @@ class EditMarriagesTest extends TestCase
         $user = $this->loginAsUser();
         $couple = Couple::factory()->create(['manager_id' => $user->id]);
 
-        $this->patch(route('couples.update', $couple), [
+        $this->post(route('couples.update', $couple), [
             'marriage_date' => '2015-10-17',
             'divorce_date' => '2017-10-17',
         ]);

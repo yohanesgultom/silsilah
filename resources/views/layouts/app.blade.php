@@ -11,6 +11,7 @@
     <title>{{ config('app.name') }}</title>
 
     <!-- Styles -->
+    <link rel="icon" href="/favicon.png" sizes="any">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     @yield('ext_css')
     <style>

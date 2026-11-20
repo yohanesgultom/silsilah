@@ -394,7 +394,7 @@ docker run -it --name silsilah-debug -v "$(pwd):/app" silsilah-dev bash
 
 ### Dockerfile Notes
 
-- **Base Image:** `php:7.4-fpm` + `node:16-buster` stages
+- **Base Image:** PHP FPM + node.js stages
 - **Dependencies:** GD, pdo_mysql, mbstring, bcmath, zip, onig, libpng, jpegoptim, optipng, etc.
 - **No MySQL container:** `phpunit.xml` overrides DB settings to use `:memory:` SQLite, so you never need MySQL for testing.
 - **No `.env` needed** in Docker because tests don't use Laravel env vars (password hashing rounds forced to 4).
@@ -445,9 +445,81 @@ docker build -t silsilah-dev .
 docker run --rm -it -v "$(pwd):/app" silsilah-dev bash   # Interactive shell
 ```
 
----
+## 14. Frontend Stack
 
-## 14. Links & References
+### Overview
+The Silsilah application uses a traditional Laravel 8 Blade + Bootstrap 3 frontend stack compiled via Laravel Mix (Webpack). The stack is intentionally lightweight and avoids modern JavaScript frameworks.
+
+### Asset Pipeline
+- **`resources/assets/js/app.js`** — Main entry point; requires `bootstrap.js`
+- **`resources/assets/js/bootstrap.js`** — Initializes Select2 and datetimepicker on DOM ready
+- **`resources/assets/sass/app.scss`** — Imports `_variables.scss` then Bootstrap; outputs to `public/css/app.css`
+- **`resources/assets/sass/_variables.scss`** — Custom SCSS variables defining the color palette and typography (see below)
+- **`webpack.mix.js`** — Configures Mix to compile JS, Sass, and copy Bootstrap fonts
+
+### CSS Framework
+- **Bootstrap 3.3.7** (via `bootstrap-sass` npm package) — used for layout, forms, modals, navbar, tables
+- Custom extenders in `public/css/tree.css` and `public/css/tree2.css` for horizontal family tree visualizations (credit: Peiwen Lu / CodePen)
+- `processCssUrls: false` in webpack config to avoid asset path issues
+
+### JavaScript Libraries (loaded via `resources/assets/js/app.js`)
+| Library | Version | Usage |
+|---------|---------|-------|
+| jQuery | 3.7.1 | General DOM manipulation, AJAX, event handling |
+| Bootstrap JS | 3.3.7 | Tooltips, modals, dropdowns (via `bootstrap.js`) |
+| Select2 | — | Enhanced select dropdowns (initialized in `bootstrap.js`) |
+| datetimepicker | — | Date selection for dob/dod fields (initialized in `bootstrap.js`) |
+
+### Leaflet Maps
+- Loaded on-demand via CDN (`unpkg.com/leaflet@1.7.1`) in death/ profile views
+- `resources/views/death.blade.php` and `resources/views/users/tree2.blade.php` include Leaflet CSS/JS
+- Map config read from `config/leaflet.php` env vars: `LEAFLET_MAP_ZOOM_LEVEL`, `LEAFLET_MAP_DETAIL_ZOOM_LEVEL`, `LEAFLET_MAP_CENTER_LATITUDE`, `LEAFLET_MAP_CENTER_LONGITUDE`
+
+### Style Conventions & Color Palette
+Variables defined in `resources/assets/sass/_variables.scss`:
+
+| Category | Variable | Value |
+|----------|----------|-------|
+| **Background** | `$body-bg` | `#f5f8fa` |
+| **Borders** | `$laravel-border-color` | `darken($body-bg, 10%)` |
+| **Brand Primary** | `$brand-primary` | `#3097D1` (Laravel blue) |
+| **Brand Info** | `$brand-info` | `#8eb4cb` |
+| **Brand Success** | `$brand-success` | `#2ab27b` |
+| **Brand Warning** | `$brand-warning` | `#cbb956` |
+| **Brand Danger** | `$brand-danger` | `#bf5329` |
+| **Typography** | `$font-family-sans-serif` | `"Trebuchet MS", sans-serif` |
+| | `$font-size-base` | `14px` |
+| | `$line-height-base` | `1.6` |
+| | `$text-color` | `#636b6f` |
+| **Navbar** | `$navbar-default-bg` | `#fff` |
+| **Buttons** | `$btn-default-color` | `$text-color` |
+| **Inputs** | `$input-border` | `lighten($text-color, 40%)` |
+| | `$input-border-focus` | `lighten($brand-primary, 25%)` |
+| | `$input-color-placeholder` | `lighten($text-color, 30%)` |
+| **Panels** | `$panel-default-heading-bg` | `#fff` |
+
+**CSS Class Conventions:**
+- Bootstrap 3 classes: `panel panel-default`, `navbar navbar-default`, `form-group`, `form-control`, `btn btn-*`, `navbar-nav`, `navbar-right`
+- Panel variants use `panel-default`; active/secondary states use contextual Bootstrap colors (`btn-primary`, `btn-warning`, `btn-default`)
+- `text-center`, `pull-right`, `pull-left` for alignment
+- `clearfix` for clearing floats
+- `sr-only` for visually hidden accessible text
+
+### Language Files
+- `resources/lang/{en,id}/*.php` — Translation strings returned as PHP arrays
+- Keys used in Blade via `__('key')` or `trans('key')`
+- Current keys: `user.php` (profile/navigation), `app.php` (labels/actions), `couple.php` (marriage details), `birthday.php`, `validation.php`
+
+### Key Views by Category
+- **Layouts:** `resources/views/layouts/app.blade.php`, `user-profile.blade.php`, `user-profile-wide.blade.php`
+- **Navigation:** `resources/views/layouts/partials/nav.blade.php`
+- **Users:** `users/search.blade.php`, `users/show.blade.php`, `users/edit.blade.php`, `users/tree.blade.php`, `users/tree2.blade.php`, partials (`profile`, `parent-spouse`, `childs`, `siblings`, `action-buttons`)
+- **Couples:** `couples/show.blade.php`, `couples/edit.blade.php`, partials (`stat`)
+- **Auth:** `resources/views/auth/login.blade.php`, `register.blade.php`, `passwords/*`
+- **Birthdays:** `birthdays/index.blade.php`
+- **Death/Cemetery:** `users/death.blade.php` (with optional Leaflet map)
+
+## 15. Links & References
 
 - **Upstream Laravel 8 Docs:** https://laravel.com/docs/8.x
 - **Original Repo:** https://github.com/nafiesl/silsilah
